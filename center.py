@@ -1,43 +1,24 @@
-import serial
-import time
+import socket
 
-class Sensor():
-    def __init__(self):
-        self.wertetabelle = []
-    
-    def appendwertetabelle(self, newTemp):
-        self.wertetabelle.append(newTemp)
+HEADER = 64
+PORT = 5050
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!D"
+SERVER = "127.0.0.1"
+ADDR = (SERVER, PORT)
 
-ser = serial.Serial(port='COM3', baudrate=9600, timeout=0)
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
 
-serCOM1 = serial.Serial(port='COM1', baudrate=9600, timeout=0)
+def send(msg):
+    message = msg.encode(FORMAT)
+    client.send(message)
+    print(client.recv(2048).decode(FORMAT))
 
-print("connected to: " + ser.portstr)
 
+try:
+    while 1:
+        send("An schenen Messwert lieferns ma do!")
 
-SensorCOM3 = Sensor()
-
-while True:
-    line = ser.readline()
-    line = line.decode("ascii")
-    a = line.split()
-
-    try: 
-        if a[0] == "SensorCOM3":
-            print(line)
-            line = line.split()
-            a = line[0] + ".appendwertetabelle(" + line[1] + ")"
-            eval(a)
-            print(SensorCOM3.wertetabelle)
-
-        elif line != " $":
-            print(line)
-
-    except:
-        continue
-    time.sleep(0.4)
-    
-
-ser.close()
-
-print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaa")
+finally:
+    send(DISCONNECT_MESSAGE)
