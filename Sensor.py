@@ -39,5 +39,5 @@ def start():
         print(f"{threading.activeCount() - 1} Leit gönnen sich grad die Sensorwerte")
 
 
-print("Da 4-Takt Motor laffn an!")
+print("Da 4-Takt Motor lafft an!")
 start()
