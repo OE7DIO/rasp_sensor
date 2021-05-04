@@ -32,13 +32,14 @@ def handle_client(conn, addr):
     connected = True
     while connected:
         t.sleep(1)
-        conn.send("A cooler Messwert".encode(FORMAT))
         msg = conn.recv(4096).decode(FORMAT)
         if msg == DISCONNECT_MESSAGE or msg == None:
             how_many_persons_will_be_looking_at_my_raspi()
             connected = False
 
         print(f"[{addr}] {msg}")
+        
+        conn.send("A cooler Messwert".encode(FORMAT))
 
     conn.close()
         
