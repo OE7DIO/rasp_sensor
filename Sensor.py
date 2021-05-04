@@ -2,7 +2,21 @@ import socket
 import threading
 import time as t
 
-HEADER = 64
+def how_many_persons_are_looking_at_my_raspi():
+    x = threading.activeCount() - 1
+    if x == 1:
+        print(f"{x} Person gönnt sich grad die Sensorwerte")
+    else:
+        print(f"{x} Leit gönnen sich grad die Sensorwerte")
+
+def how_many_persons_will_be_looking_at_my_raspi():
+    x = threading.activeCount() - 2
+    if x == 1:
+        print(f"{x} Person gönnt sich grad die Sensorwerte")
+    else:
+        print(f"{x} Leit gönnen sich grad die Sensorwerte")
+
+
 PORT = 5050
 SERVER = "0.0.0.0"
 ADDR = (SERVER, PORT)
@@ -21,7 +35,7 @@ def handle_client(conn, addr):
         conn.send("A cooler Messwert".encode(FORMAT))
         msg = conn.recv(4096).decode(FORMAT)
         if msg == DISCONNECT_MESSAGE or msg == None:
-            print(f"{threading.activeCount() - 1} Leit gönnen sich grad die Sensorwerte")
+            how_many_persons_will_be_looking_at_my_raspi()
             connected = False
 
         print(f"[{addr}] {msg}")
@@ -36,7 +50,7 @@ def start():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"{threading.activeCount() - 1} Leit gönnen sich grad die Sensorwerte")
+        how_many_persons_are_looking_at_my_raspi()
 
 
 print("Da 4-Takt Motor lafft an!")
