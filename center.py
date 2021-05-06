@@ -51,12 +51,15 @@ def collect_data(msg, Sensor):
 
 if __name__ == "__main__":
     SensorMils = Sensor("Mils", "127.0.0.1", 5050)
+    SensorHall = Sensor("Mils", "127.0.0.1", 5051)
     try:
         activate_sensor(SensorMils, "a Fleischinger Kaas")
+        activate_sensor(SensorHall, "mit Senf Bitte")
         while 1:
             t.sleep(10)
             pass
 
     finally:
         SensorMils.send_msg(DISCONNECT_MESSAGE)
+        SensorHall.send_msg(DISCONNECT_MESSAGE)
         statusRunning = False
