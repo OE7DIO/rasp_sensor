@@ -1,7 +1,18 @@
 import socket
 import msgpack
+import threading
 
-HEADER = 64
+class Sensor():
+    def __init__(self, name):
+        self.__name = name
+        self.__listOfValues = []
+    
+    def addValue(self, newValue):
+        self.__listOfValues.append(newValue)
+
+    def printValues(self):
+        print(self.__listOfValues)
+
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
@@ -11,7 +22,9 @@ ADDR = (SERVER, PORT)
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
 
-def send(msg):
+SensorMils = Sensor("Mils")
+
+def send(msg, Sensor):
     message = msg.encode(FORMAT)
     client.send(message)
 
@@ -19,14 +32,15 @@ def send(msg):
     buffer = client.recv(4096)
     unpacker.feed(buffer)
     for d in unpacker:
-        print(d)
         x = d
     print(x)
+    Sensor.addValue(x["value"])
+    Sensor.printValues()
 
 
 try:
     while 1:
-        send("An schenen Messwert lieferns ma do!")
+        send("An schenen Messwert lieferns ma do!", SensorMils)
 
 finally:
     send(DISCONNECT_MESSAGE)

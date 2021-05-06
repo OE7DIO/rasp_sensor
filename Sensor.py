@@ -34,21 +34,26 @@ def handle_client(conn, addr):
     connected = True
     while connected:
         t.sleep(1)
-        msg = conn.recv(4096).decode(FORMAT)
+        try:
+            msg = conn.recv(4096).decode(FORMAT)
+        except:
+            continue
         if msg == DISCONNECT_MESSAGE or msg == None:
             how_many_persons_will_be_looking_at_my_raspi()
             connected = False
 
-        print(f"[{addr}] {msg}")
 
-        message = {
-            "source" : "Source",
-            "value" : str(random.randint(0, 100)),
-            "time" : t.time()
-        }
+        else:
+            print(f"[{addr}] {msg}")
+
+            message = {
+                "source" : "Source",
+                "value" : str(random.randint(0, 100)),
+                "time" : t.time()
+            }
         
-        packer = msgpack.Packer()
-        conn.sendall(packer.pack(message)) 
+            packer = msgpack.Packer()
+            conn.sendall(packer.pack(message)) 
 
     conn.close()
         
