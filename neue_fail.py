@@ -1,1 +1,0 @@
-print("es radl woa dar")
