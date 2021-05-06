@@ -11,13 +11,6 @@ def how_many_persons_are_looking_at_my_raspi():
     else:
         print(f"{x} Leit gönnen sich grad die Sensorwerte")
 
-def how_many_persons_will_be_looking_at_my_raspi():
-    x = threading.activeCount() - 2
-    if x == 1:
-        print(f"{x} Person gönnt sich grad die Sensorwerte")
-    else:
-        print(f"{x} Leit gönnen sich grad die Sensorwerte")
-
 
 PORT = 5050
 SERVER = "0.0.0.0"
@@ -39,7 +32,6 @@ def handle_client(conn, addr):
         except:
             continue
         if msg == DISCONNECT_MESSAGE or msg == None:
-            how_many_persons_will_be_looking_at_my_raspi()
             connected = False
 
 
@@ -58,15 +50,12 @@ def handle_client(conn, addr):
     conn.close()
         
 
-def start():
+if __name__ == "__main__":
     server.listen()
+    print("Da 4-Takt Motor lafft an!")
     print(f"Da Server horcht auf alle IPs: {SERVER}")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         how_many_persons_are_looking_at_my_raspi()
-
-
-print("Da 4-Takt Motor lafft an!")
-start()
