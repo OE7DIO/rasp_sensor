@@ -1,4 +1,5 @@
 import socket
+import msgpack
 
 HEADER = 64
 PORT = 5050
@@ -13,7 +14,14 @@ client.connect(ADDR)
 def send(msg):
     message = msg.encode(FORMAT)
     client.send(message)
-    print(client.recv(2048).decode(FORMAT))
+
+    unpacker = msgpack.Unpacker()
+    buffer = client.recv(4096)
+    unpacker.feed(buffer)
+    for d in unpacker:
+        print(d)
+        x = d
+    print(x)
 
 
 try:

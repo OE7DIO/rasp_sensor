@@ -1,6 +1,8 @@
 import socket 
 import threading
 import time as t
+import msgpack
+import random
 
 def how_many_persons_are_looking_at_my_raspi():
     x = threading.activeCount() - 1
@@ -38,8 +40,15 @@ def handle_client(conn, addr):
             connected = False
 
         print(f"[{addr}] {msg}")
+
+        message = {
+            "source" : "Source",
+            "value" : str(random.randint(0, 100)),
+            "time" : t.time()
+        }
         
-        conn.send("A cooler Messwert".encode(FORMAT))
+        packer = msgpack.Packer()
+        conn.sendall(packer.pack(message)) 
 
     conn.close()
         
