@@ -4,7 +4,7 @@ import time as t
 import msgpack
 import random
 
-def how_many_persons_are_looking_at_my_raspi():
+def n_recievers():
     x = threading.activeCount() - 1
     if x == 1:
         print(f"{x} Person gönnt sich grad die Sensorwerte")
@@ -17,9 +17,6 @@ SERVER = "0.0.0.0"
 ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
 
 def handle_client(conn, addr):
     print(f"Der Hansl von: {addr} gönnt sich jetzt a die Messwerte")
@@ -51,11 +48,14 @@ def handle_client(conn, addr):
         
 
 if __name__ == "__main__":
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(ADDR)
     server.listen()
+
     print("Da 4-Takt Motor lafft an!")
     print(f"Da Server horcht auf alle IPs: {SERVER}")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        how_many_persons_are_looking_at_my_raspi()
+        n_recievers()
