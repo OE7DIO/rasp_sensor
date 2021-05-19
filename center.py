@@ -37,7 +37,7 @@ class Sensor():
 
     def activate_sensor(self, msg):
         self.establishConnection()
-        thread = threading.Thread(target=collect_data, args=(msg, self))
+        thread = threading.Thread(target=self.collect_data, args=(msg))
         thread.start()
 
     def collect_data(self, msg):
@@ -51,15 +51,15 @@ class Sensor():
 
 if __name__ == "__main__":
     SensorMils = Sensor("Mils", "127.0.0.1", 5050)
-    SensorHall = Sensor("Mils", "127.0.0.1", 5051)
+    #SensorHall = Sensor("Mils", "127.0.0.1", 5051)
     try:
-        SensorMils.activate_sensor("a Fleischinger Kaas")
-        SensorHall.activate_sensor("mit Senf Bitte")
+        SensorMils.activate_sensor("1")
+        #SensorHall.activate_sensor("mit Senf Bitte")
         while 1:
             t.sleep(10)
             pass
 
     finally:
         SensorMils.send_msg(DISCONNECT_MESSAGE)
-        SensorHall.send_msg(DISCONNECT_MESSAGE)
+        #SensorHall.send_msg(DISCONNECT_MESSAGE)
         statusRunning = False
