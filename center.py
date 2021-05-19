@@ -2,6 +2,7 @@ import socket
 import msgpack
 import threading
 import time as t
+import configparser
 
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
@@ -32,7 +33,7 @@ class Sensor():
         self.__listOfValues.append(newValue)
 
     def printValues(self):
-        print(self.__listOfValues)
+        print(self.__listOfValues[-1])
 
 
     def activate_sensor(self, msg):
@@ -48,9 +49,36 @@ class Sensor():
             self.addValue(x["value"])
             self.printValues()
 
+def read_config():
+    config_object = configparser.ConfigParser()
+    config_object.read("config.config")
+    sensorinfo = config_object["SENSORINFO"]
+    sensorinfo = [sensorinfo["name"], sensorinfo["ip"], sensorinfo["port"]]
+    
+    return sensorinfo
 
 if __name__ == "__main__":
-    SensorMils = Sensor("Mils", "127.0.0.1", 5050)
+    try:
+        sensorinfo = read_config()
+        print("configuration found: ", sensorinfo)
+        
+    except Exception:
+        print("no configuration file found, enter sensorinfo here manually:")
+        sensorinfo = [input("Sensorname: "), input("Sensor ip: "),input("Port to listen to: ")]
+        config_object = configparser.ConfigParser()
+        config_object["SENSORINFO"] = {
+            "name" : sensorinfo[0],
+            "ip" :  sensorinfo[1], 
+            "port" : sensorinfo[2]
+        }
+
+        with open("config.config", 'w') as conf:
+            config_object.write(conf)
+        print("config has been stored in file for future use.")
+
+    SensorMils = Sensor(str(sensorinfo[0]), str(sensorinfo[1]), int(sensorinfo[2]))
+    
+    #SensorMils = Sensor("Mils", "127.0.0.1", 5050)
     #SensorHall = Sensor("Mils", "127.0.0.1", 5051)
     try:
         SensorMils.activate_sensor("1")
