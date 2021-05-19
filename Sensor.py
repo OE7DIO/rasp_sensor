@@ -28,7 +28,6 @@ def handle_client(conn, addr):
             msg = conn.recv(4096).decode(FORMAT)
         except:
             connected = False
-            continue
         if msg == DISCONNECT_MESSAGE or msg == None:
             connected = False
 
