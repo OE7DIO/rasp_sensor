@@ -35,26 +35,26 @@ class Sensor():
         print(self.__listOfValues)
 
 
-def activate_sensor(Sensor, msg):
-    Sensor.establishConnection()
-    thread = threading.Thread(target=collect_data, args=(msg, Sensor))
-    thread.start()
+    def activate_sensor(self, msg):
+        self.establishConnection()
+        thread = threading.Thread(target=collect_data, args=(msg, self))
+        thread.start()
 
-def collect_data(msg, Sensor):
-    global statusRunning
-    while statusRunning:
-        Sensor.send_msg(msg)
-        x = Sensor.recv_msg()
-        Sensor.addValue(x["value"])
-        Sensor.printValues()
+    def collect_data(self, msg):
+        global statusRunning
+        while statusRunning:
+            self.send_msg(msg)
+            x = self.recv_msg()
+            self.addValue(x["value"])
+            self.printValues()
 
 
 if __name__ == "__main__":
     SensorMils = Sensor("Mils", "127.0.0.1", 5050)
     SensorHall = Sensor("Mils", "127.0.0.1", 5051)
     try:
-        activate_sensor(SensorMils, "a Fleischinger Kaas")
-        activate_sensor(SensorHall, "mit Senf Bitte")
+        SensorMils.activate_sensor("a Fleischinger Kaas")
+        SensorHall.activate_sensor("mit Senf Bitte")
         while 1:
             t.sleep(10)
             pass
