@@ -7,6 +7,7 @@ import configparser
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
 statusRunning = True
+Sensors=[]
 
 class Sensor():
     def __init__(self, name, ip, port):
@@ -44,39 +45,59 @@ class Sensor():
     def collect_data(self, msg):
         global statusRunning
         while statusRunning:
-            self.send_msg(msg)
-            x = self.recv_msg()
-            self.addValue(x["value"])
-            self.printValues()
+            try:
+                self.send_msg(msg)
+                x = self.recv_msg()
+                self.addValue(x["value"])
+                self.printValues()
+            except:
+                t.sleep(5)
+                self.establishConnection()
 
 def read_config():
     config_object = configparser.ConfigParser()
     config_object.read("config.config")
-    sensorinfo = config_object["SENSORINFO"]
-    sensorinfo = [sensorinfo["name"], sensorinfo["ip"], sensorinfo["port"]]
+    senfo = config_object["SENSORINFO"]
+    SensorNames : list = list(senfo["name"].split(","))
+    SensorIPs : list = list(senfo["ip"].split(","))
+    SensorPorts : list = list(senfo["port"].split(","))
+
+    for count, name in enumerate(SensorNames):
+        tempSensor = [name, SensorIPs[0], SensorPorts[0]]
+        Sensors.append(tempSensor)
+        
+
+
+
+
+
+
+    senfo = [senfo["name"], senfo["ip"], senfo["port"]]
+
     
-    return sensorinfo
+    return senfo
 
 if __name__ == "__main__":
     try:
-        sensorinfo = read_config()
-        print("configuration found: ", sensorinfo)
+        senfo = read_config()
+        print("configuration found: ", senfo)
         
     except Exception:
-        print("no configuration file found, enter sensorinfo here manually:")
-        sensorinfo = [input("Sensorname: "), input("Sensor ip: "),input("Port to listen to: ")]
+        print("no configuration file found, enter senfo here manually:")
+        senfo = [input("Sensorname: "), input("Sensor ip: "),input("Port to listen to: ")]
         config_object = configparser.ConfigParser()
-        config_object["SENSORINFO"] = {
-            "name" : sensorinfo[0],
-            "ip" :  sensorinfo[1], 
-            "port" : sensorinfo[2]
+        config_object["senfo"] = {
+            "name" : senfo[0],
+            "ip" :  senfo[1], 
+            "port" : senfo[2]
         }
 
         with open("config.config", 'w') as conf:
             config_object.write(conf)
         print("config has been stored in file for future use.")
 
-    SensorMils = Sensor(str(sensorinfo[0]), str(sensorinfo[1]), int(sensorinfo[2]))
+    #print(Sensors[4][0], Sensors[4][1], Sensors[4][2])
+    SensorMils = Sensor(str((Sensors[0])[0]), str((Sensors[0])[1]), int((Sensors[0])[2]))
     
     #SensorMils = Sensor("Mils", "127.0.0.1", 5050)
     #SensorHall = Sensor("Mils", "127.0.0.1", 5051)
