@@ -55,33 +55,18 @@ class Sensor():
                 self.establishConnection()
 
 def read_config():
-    config_object = configparser.ConfigParser()
-    config_object.read("config.config")
-    senfo = config_object["SENSORINFO"]
-    SensorNames : list = list(senfo["name"].split(","))
-    SensorIPs : list = list(senfo["ip"].split(","))
-    SensorPorts : list = list(senfo["port"].split(","))
-
-    for count, name in enumerate(SensorNames):
-        tempSensor = [name, SensorIPs[0], SensorPorts[0]]
-        Sensors.append(tempSensor)
-        
-
-
-
-
-
-
-    senfo = [senfo["name"], senfo["ip"], senfo["port"]]
-
-    
-    return senfo
-
-if __name__ == "__main__":
+    global Sensors
     try:
-        senfo = read_config()
-        print("configuration found: ", senfo)
-        
+        config_object = configparser.ConfigParser()
+        config_object.read("config.config")
+        senfo = config_object["SENSORINFO"]
+        SensorNames : list = list(senfo["name"].split(","))
+        SensorIPs : list = list(senfo["ip"].split(","))
+        SensorPorts : list = list(senfo["port"].split(","))
+
+        for count, name in enumerate(SensorNames):
+            Sensors.append(Sensor(name, SensorIPs[count], int(SensorPorts[count])))
+
     except Exception:
         print("no configuration file found, enter senfo here manually:")
         senfo = [input("Sensorname: "), input("Sensor ip: "),input("Port to listen to: ")]
@@ -95,20 +80,22 @@ if __name__ == "__main__":
         with open("config.config", 'w') as conf:
             config_object.write(conf)
         print("config has been stored in file for future use.")
-
-    #print(Sensors[4][0], Sensors[4][1], Sensors[4][2])
-    SensorMils = Sensor(str((Sensors[0])[0]), str((Sensors[0])[1]), int((Sensors[0])[2]))
     
-    #SensorMils = Sensor("Mils", "127.0.0.1", 5050)
-    #SensorHall = Sensor("Mils", "127.0.0.1", 5051)
+    return "Schad"
+
+if __name__ == "__main__":
+    senfo = read_config()
+    print("configuration found: ", senfo)
+        
+    
     try:
-        SensorMils.activate_sensor("1")
-        #SensorHall.activate_sensor("mit Senf Bitte")
+        for sensor in Sensors:
+            sensor.activate_sensor("1")
         while 1:
             t.sleep(10)
             pass
 
     finally:
-        SensorMils.send_msg(DISCONNECT_MESSAGE)
-        #SensorHall.send_msg(DISCONNECT_MESSAGE)
+        for sensor in Sensors:
+            sensor.send_msg(DISCONNECT_MESSAGE)
         statusRunning = False
