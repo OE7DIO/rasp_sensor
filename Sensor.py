@@ -28,8 +28,12 @@ def handle_client(conn, addr):
             msg = conn.recv(4096).decode(FORMAT)
         except:
             connected = False
+            conn.close()
+            break
         if msg == DISCONNECT_MESSAGE or msg == None:
             connected = False
+            conn.close()
+            break
 
 
         else:
@@ -37,8 +41,11 @@ def handle_client(conn, addr):
 
             message = {
                 "source" : "Source",
+                "ID" : 1,
+                "time" : t.time(),
                 "value" : str(random.randint(0, 100)),
-                "time" : t.time()
+                "pressure" : 13,
+                "waterlevel" : 14.6,
             }
         
             packer = msgpack.Packer()

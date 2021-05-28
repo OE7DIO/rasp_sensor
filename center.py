@@ -54,11 +54,14 @@ class Sensor():
                 t.sleep(5)
                 self.establishConnection()
 
+
+
+
 def read_config():
     global Sensors
     try:
         config_object = configparser.ConfigParser()
-        config_object.read("config.config")
+        config_object.read("config.conf")
         senfo = config_object["SENSORINFO"]
         SensorNames : list = list(senfo["name"].split(","))
         SensorIPs : list = list(senfo["ip"].split(","))
@@ -71,17 +74,22 @@ def read_config():
         print("no configuration file found, enter senfo here manually:")
         senfo = [input("Sensorname: "), input("Sensor ip: "),input("Port to listen to: ")]
         config_object = configparser.ConfigParser()
-        config_object["senfo"] = {
+        config_object["SENSORINFO"] = {
             "name" : senfo[0],
             "ip" :  senfo[1], 
             "port" : senfo[2]
         }
 
-        with open("config.config", 'w') as conf:
+        with open("config.conf", 'w') as conf:
             config_object.write(conf)
         print("config has been stored in file for future use.")
+        Sensors.append(Sensor(senfo[0], senfo[1], int(senfo[2])))
     
     return "Schad"
+
+
+
+
 
 if __name__ == "__main__":
     senfo = read_config()
