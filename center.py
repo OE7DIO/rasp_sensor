@@ -16,8 +16,14 @@ class Sensor():
         self.__listOfValues = []
     
     def establishConnection(self):
-        self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__sock.connect(self.__address)
+        while statusRunning:
+            try:
+                self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.__sock.connect(self.__address)
+                break
+            except ConnectionRefusedError:
+                t.sleep(5)
+                continue
     
     def send_msg(self, msg):
         message = msg.encode(FORMAT)
@@ -50,6 +56,7 @@ class Sensor():
                 x = self.recv_msg()
                 self.addValue(x["value"])
                 self.printValues()
+                print(x["waterlevel"])
             except:
                 t.sleep(5)
                 self.establishConnection()
