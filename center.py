@@ -3,6 +3,7 @@ import msgpack
 import threading
 import time as t
 import configparser
+import os
 
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
@@ -100,7 +101,10 @@ if __name__ == "__main__":
         for sensor in Sensors:
             sensor.activate_sensor("1")
         while 1:
-            t.sleep(10)
+            for Sensor in Sensors:
+                print(Sensor)
+            t.sleep(1)
+            os.system('cls')
             pass
 
     finally:
