@@ -3,6 +3,7 @@ import threading
 import time as t
 import msgpack
 import random
+import sys
 
 def n_recievers():
     x = threading.activeCount() - 1
@@ -18,8 +19,15 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
 
+if sys.version_info < (3, 6):
+    old_python = True
+
+
 def handle_client(conn, addr):
-    print(f"Der Hansl von: {addr} gönnt sich jetzt a die Messwerte")
+    if old_python:
+        print("Der Hansl von: {} gönnt sich jetzt a die Messwerte".format(addr))
+    else:
+        print(f"Der Hansl von: {addr} gönnt sich jetzt a die Messwerte")
 
     connected = True
     while connected:
@@ -37,7 +45,10 @@ def handle_client(conn, addr):
 
 
         else:
-            print(f"[{addr}] {msg}")
+            if old_python:
+                print("[{}] {}".format(addr, msg))
+            else:
+                print(f"[{addr}] {msg}")
 
             message = {
                 "source" : "Source",
@@ -60,7 +71,10 @@ if __name__ == "__main__":
     server.listen()
 
     print("Da 4-Takt Motor lafft an!")
-    print(f"Da Server horcht auf alle IPs: {SERVER}")
+    if old_python:
+        print("Da Server horcht auf alle IPs: {}".format(SERVER))
+    else:
+        print(f"Da Server horcht auf alle IPs: {SERVER}")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))

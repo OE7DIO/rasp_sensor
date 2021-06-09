@@ -4,20 +4,23 @@ import threading
 import time as t
 import configparser
 import os
+import sys
 
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
 statusRunning = True
 Sensors=[]
 
+
 class Sensor():
     def __init__(self, name, ip, port):
         self.__name = name
         self.__address = (ip, port)
         self.__data = []
+        self.__connection_status = "Connection Lost!"
     
     def __str__(self):
-        print(f"Sensor {self.__name}:")
+        print(f"Sensor {self.__name}: {self.__connection_status}")
         x = ""
         for count, value in enumerate(self.__data[1]):
             x = x + f"{self.__data[0][count]}: {value} {self.__data[2][count]}"
@@ -46,7 +49,6 @@ class Sensor():
         for x in self.__unpacker:
             return x
 
-
     def activate_sensor(self, msg):
         self.establishConnection()
         thread = threading.Thread(target=self.collect_data, args=(msg))
@@ -59,7 +61,9 @@ class Sensor():
                 self.send_msg(msg)
                 x = self.recv_msg()
                 self.__data = [x["type"], x["value"], x["unit"]]
+                self.__connection_status = "Connected"
             except:
+                self.__connection_status = "Connection Lost!"
                 t.sleep(5)
                 self.establishConnection()
 
@@ -102,6 +106,9 @@ def read_config():
 
 
 if __name__ == "__main__":
+    if sys.version_info < (3, 6):
+        print("Es wird eine Python Version 3.6 oder höher benötigt!")
+        quit()
     senfo = read_config()
     print("configuration found: ", senfo)
         
@@ -110,9 +117,11 @@ if __name__ == "__main__":
         for sensor in Sensors:
             sensor.activate_sensor("1")
         while 1:
+            os.system('cls')
             try:
                 for Sensor in Sensors:
                     print(Sensor)
+                    print("\n")
                 t.sleep(1)
                 os.system('cls')
                 pass
