@@ -64,11 +64,7 @@ def handle_client(conn, addr):
         
             packer = msgpack.Packer()
             conn.sendall(packer.pack(message))
-
-    if old_python:
-        print("[{}]: Connection Lost!".format(addr))
-    else:
-        print(f"[{addr}] Connection Lost!")
+            
     conn.close()
         
 
