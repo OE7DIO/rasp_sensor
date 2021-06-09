@@ -19,11 +19,11 @@ ADDR = (SERVER, PORT)
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
 
-if sys.version_info < (3, 6):
-    old_python = True
+
 
 
 def handle_client(conn, addr):
+    global old_python
     if old_python:
         print("Der Hansl von: {} gönnt sich jetzt a die Messwerte".format(addr))
     else:
@@ -37,19 +37,22 @@ def handle_client(conn, addr):
         except:
             connected = False
             conn.close()
+            if old_python:
+                print("[{}]: Connection Lost!".format(addr))
+            else:
+                print(f"[{addr}] Connection Lost!")
             break
         if msg == DISCONNECT_MESSAGE or msg == None:
             connected = False
             conn.close()
+            if old_python:
+                print("[{}]: Connection Lost!".format(addr))
+            else:
+                print(f"[{addr}] Connection Lost!")
             break
 
 
         else:
-            if old_python:
-                print("[{}] {}".format(addr, msg))
-            else:
-                print(f"[{addr}] {msg}")
-
             message = {
                 "source" : "Source",
                 "ID" : 1,
@@ -60,12 +63,21 @@ def handle_client(conn, addr):
             }
         
             packer = msgpack.Packer()
-            conn.sendall(packer.pack(message)) 
+            conn.sendall(packer.pack(message))
 
+    if old_python:
+        print("[{}]: Connection Lost!".format(addr))
+    else:
+        print(f"[{addr}] Connection Lost!")
     conn.close()
         
 
 if __name__ == "__main__":
+    global old_python
+    old_python = False
+    if sys.version_info < (3, 6):
+        old_python = True
+
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     server.listen()
