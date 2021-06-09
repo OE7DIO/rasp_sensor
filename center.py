@@ -68,7 +68,11 @@ class Sensor():
                 self.establishConnection()
 
 
-
+def clear_screen():
+    if sys.platform == "linux":
+        os.system("clear")
+    elif sys.platform == "win32":
+        os.system("cls")
 
 
 def read_config():
@@ -117,13 +121,13 @@ if __name__ == "__main__":
         for sensor in Sensors:
             sensor.activate_sensor("1")
         while 1:
-            os.system('cls')
+            clear_screen()
             try:
                 for Sensor in Sensors:
                     print(Sensor)
                     print("\n")
                 t.sleep(1)
-                os.system('cls')
+                clear_screen()
                 pass
             except Exception:
                 pass
