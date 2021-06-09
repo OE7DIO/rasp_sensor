@@ -14,7 +14,17 @@ class Sensor():
     def __init__(self, name, ip, port):
         self.__name = name
         self.__address = (ip, port)
+        self.__data = []
     
+    def __str__(self):
+        print(f"Sensor {self.__name}:")
+        x = ""
+        for count, value in enumerate(self.__data[1]):
+            x = x + f"{self.__data[0][count]}: {value} {self.__data[2][count]}"
+            for i in range(40*(count+1) - len(x)):
+                x = x +" "
+        return x
+
     def establishConnection(self):
         while statusRunning:
             try:
@@ -48,12 +58,11 @@ class Sensor():
             try:
                 self.send_msg(msg)
                 x = self.recv_msg()
-                print(x["type"])
-                print(x["value"])
-                print(x["unit"])
+                self.__data = [x["type"], x["value"], x["unit"]]
             except:
                 t.sleep(5)
                 self.establishConnection()
+
 
 
 
@@ -101,11 +110,14 @@ if __name__ == "__main__":
         for sensor in Sensors:
             sensor.activate_sensor("1")
         while 1:
-            for Sensor in Sensors:
-                print(Sensor)
-            t.sleep(1)
-            os.system('cls')
-            pass
+            try:
+                for Sensor in Sensors:
+                    print(Sensor)
+                t.sleep(1)
+                os.system('cls')
+                pass
+            except Exception:
+                pass
 
     finally:
         for sensor in Sensors:
