@@ -69,7 +69,7 @@ def read_config():
     global Sensors
     try:
         config_object = configparser.ConfigParser()
-        config_object.read("ServerConfig.conf")
+        config_object.read("centerConfig.conf")
         senfo = config_object["SENSORINFO"]
         SensorNames : list = list(senfo["name"].split(","))
         SensorIPs : list = list(senfo["ip"].split(","))
