@@ -14,6 +14,7 @@ class Sensor():
         self.__name = name
         self.__address = (ip, port)
         self.__listOfValues = []
+        self.__measuerments = []
     
     def establishConnection(self):
         while statusRunning:
@@ -68,11 +69,12 @@ def read_config():
     global Sensors
     try:
         config_object = configparser.ConfigParser()
-        config_object.read("config.conf")
+        config_object.read("ServerConfig.conf")
         senfo = config_object["SENSORINFO"]
         SensorNames : list = list(senfo["name"].split(","))
         SensorIPs : list = list(senfo["ip"].split(","))
         SensorPorts : list = list(senfo["port"].split(","))
+        SensorMeasurements : list = list(senfo["avaliableSensors"].split(","))
 
         for count, name in enumerate(SensorNames):
             Sensors.append(Sensor(name, SensorIPs[count], int(SensorPorts[count])))
