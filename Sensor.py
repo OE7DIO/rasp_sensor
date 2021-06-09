@@ -43,9 +43,9 @@ def handle_client(conn, addr):
                 "source" : "Source",
                 "ID" : 1,
                 "time" : t.time(),
+                "type" : 13,
                 "value" : str(random.randint(0, 100)),
-                "pressure" : 13,
-                "waterlevel" : 14.6,
+                "unit" : 14.6,
             }
         
             packer = msgpack.Packer()

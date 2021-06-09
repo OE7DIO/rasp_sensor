@@ -13,8 +13,6 @@ class Sensor():
     def __init__(self, name, ip, port):
         self.__name = name
         self.__address = (ip, port)
-        self.__listOfValues = []
-        self.__measuerments = []
     
     def establishConnection(self):
         while statusRunning:
@@ -36,12 +34,6 @@ class Sensor():
         self.__unpacker.feed(self.__buffer)
         for x in self.__unpacker:
             return x
-    
-    def addValue(self, newValue):
-        self.__listOfValues.append(newValue)
-
-    def printValues(self):
-        print(self.__listOfValues[-1])
 
 
     def activate_sensor(self, msg):
@@ -55,9 +47,9 @@ class Sensor():
             try:
                 self.send_msg(msg)
                 x = self.recv_msg()
-                self.addValue(x["value"])
-                self.printValues()
-                print(x["waterlevel"])
+                print(x["type"])
+                print(x["value"])
+                print(x["unit"])
             except:
                 t.sleep(5)
                 self.establishConnection()
@@ -74,7 +66,6 @@ def read_config():
         SensorNames : list = list(senfo["name"].split(","))
         SensorIPs : list = list(senfo["ip"].split(","))
         SensorPorts : list = list(senfo["port"].split(","))
-        SensorMeasurements : list = list(senfo["avaliableSensors"].split(","))
 
         for count, name in enumerate(SensorNames):
             Sensors.append(Sensor(name, SensorIPs[count], int(SensorPorts[count])))
