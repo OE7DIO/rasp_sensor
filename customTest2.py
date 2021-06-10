@@ -14,7 +14,7 @@ def init_sensor():
 def sense(): 
     #put your sensor here
     global senfo
-    senfo["value"] = not senfo["value"]
+    senfo["value"] = random.randint(5, 19)
     
 
 def get_data():
