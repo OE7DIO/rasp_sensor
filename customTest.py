@@ -1,5 +1,10 @@
+import random
+
+
 def init_sensor():
     print("INIT Funktioniert")
 
+
 def get_data():
-    return "get_data lafft a "
+    name = "Käsezähler"
+    return [name, random.randint(0, 100), "Käseräder"]

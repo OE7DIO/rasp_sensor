@@ -25,6 +25,7 @@ custom_sensors = []
 
 
 def handle_client(conn, addr):
+    global custom_sensors
     print("Der Hansl von: {} gönnt sich jetzt a die Messwerte".format(addr))
     connected = True
     while connected:
@@ -50,6 +51,18 @@ def handle_client(conn, addr):
                 "value" : [random.randint(0, 100), random.randint(5, 20), random.randint(0, 1)],
                 "unit" : ["°C", "m", ""],
             }
+
+            
+            for custom_sensor in custom_sensors:
+                try:
+                    exec("import " + custom_sensor)
+                    x = eval(custom_sensor + ".get_data()")
+                    message["type"].append(x[0])
+                    message["value"].append(x[1])
+                    message["unit"].append(x[2])
+                except:
+                    print("Warning: Customsensors {} 'get_data' function is corrupt".format(custom_sensor))
+
             packer = msgpack.Packer()
             conn.sendall(packer.pack(message))        
     conn.close()
@@ -61,20 +74,19 @@ def read_config():
         config_object = configparser.ConfigParser()
         config_object.read("SensorConfig.conf")
         senfo = config_object["CUSTOMSENSORS"]
-        custom_sensor_filenames : list = list(senfo["filename"].split(","))
+        custom_sensors = list(senfo["filename"].split(","))
 
-        for filename in custom_sensor_filenames:
+        for custom_sensor in custom_sensors:
             try:
-                exec("import " + filename)
-                custom_sensors.append(filename)
+                
+                exec("import " + custom_sensor)
             except:
-                print("ERROR: Customsensor {} is corrupt!".format(filename))
+                print("ERROR: Customsensor {} is corrupt!".format(custom_sensor))
         for custom_sensor in custom_sensors:
             try:
                 eval(custom_sensor + ".init_sensor()")
-                print(eval(custom_sensor + ".get_data()"))
             except:
-                print("Warning: One Sensor has no 'init_sensor' function")
+                print("Warning: Customsensor {} has no 'init_sensor' function".format(custom_sensor))
 
     except Exception:
         config_object = configparser.ConfigParser()
