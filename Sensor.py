@@ -65,13 +65,14 @@ def read_config():
 
         for filename in custom_sensor_filenames:
             try:
-                import filename
-                custom_sensors.append(filename[:-3])
+                exec("import " + filename)
+                custom_sensors.append(filename)
             except:
                 print("ERROR: Customsensor {} is corrupt!".format(filename))
         for custom_sensor in custom_sensors:
             try:
-                custom_sensor.init_sensor()
+                eval(custom_sensor + ".init_sensor()")
+                print(eval(custom_sensor + ".get_data()"))
             except:
                 print("Warning: One Sensor has no 'init_sensor' function")
 
