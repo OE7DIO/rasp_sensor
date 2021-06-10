@@ -6,11 +6,11 @@ import random
 import sys
 
 def n_recievers():
-    x = threading.activeCount() - 1
+    x = threading.active_count() - 1
     if x == 1:
-        print(f"{x} Person gönnt sich grad die Sensorwerte")
+        print("{} Person gönnt sich grad die Sensorwerte".format(x))
     else:
-        print(f"{x} Leit gönnen sich grad die Sensorwerte")
+        print("{} Leit gönnen sich grad die Sensorwerte".format(x))
 
 
 PORT = 5050
@@ -23,11 +23,7 @@ DISCONNECT_MESSAGE = "!D"
 
 
 def handle_client(conn, addr):
-    global old_python
-    if old_python:
-        print("Der Hansl von: {} gönnt sich jetzt a die Messwerte".format(addr))
-    else:
-        print(f"Der Hansl von: {addr} gönnt sich jetzt a die Messwerte")
+    print("Der Hansl von: {} gönnt sich jetzt a die Messwerte".format(addr))
 
     connected = True
     while connected:
@@ -37,18 +33,12 @@ def handle_client(conn, addr):
         except:
             connected = False
             conn.close()
-            if old_python:
-                print("[{}]: Connection Lost!".format(addr))
-            else:
-                print(f"[{addr}] Connection Lost!")
+            print("[{}]: Connection Lost!".format(addr))
             break
         if msg == DISCONNECT_MESSAGE or msg == None:
             connected = False
             conn.close()
-            if old_python:
-                print("[{}]: Connection Lost!".format(addr))
-            else:
-                print(f"[{addr}] Connection Lost!")
+            print("[{}]: Connection Lost!".format(addr))
             break
 
 
@@ -69,20 +59,13 @@ def handle_client(conn, addr):
         
 
 if __name__ == "__main__":
-    global old_python
-    old_python = False
-    if sys.version_info < (3, 6):
-        old_python = True
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     server.listen()
 
     print("Da 4-Takt Motor lafft an!")
-    if old_python:
-        print("Da Server horcht auf alle IPs: {}".format(SERVER))
-    else:
-        print(f"Da Server horcht auf alle IPs: {SERVER}")
+    print("Da Server horcht auf alle IPs: {}".format(SERVER))
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))

@@ -8,8 +8,8 @@ import sys
 
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!D"
-statusRunning = True
-Sensors=[]
+status_running = True
+sensors=[]
 
 
 class Sensor():
@@ -28,8 +28,8 @@ class Sensor():
                 x = x +" "
         return x
 
-    def establishConnection(self):
-        while statusRunning:
+    def establish_connection(self):
+        while status_running:
             try:
                 self.__sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.__sock.connect(self.__address)
@@ -50,13 +50,13 @@ class Sensor():
             return x
 
     def activate_sensor(self, msg):
-        self.establishConnection()
+        self.establish_connection()
         thread = threading.Thread(target=self.collect_data, args=(msg))
         thread.start()
 
     def collect_data(self, msg):
-        global statusRunning
-        while statusRunning:
+        global status_running
+        while status_running:
             try:
                 self.send_msg(msg)
                 x = self.recv_msg()
@@ -65,7 +65,7 @@ class Sensor():
             except:
                 self.__connection_status = "Connection Lost!"
                 t.sleep(5)
-                self.establishConnection()
+                self.establish_connection()
 
 
 def clear_screen():
@@ -76,17 +76,17 @@ def clear_screen():
 
 
 def read_config():
-    global Sensors
+    global sensors
     try:
         config_object = configparser.ConfigParser()
         config_object.read("centerConfig.conf")
         senfo = config_object["SENSORINFO"]
-        SensorNames : list = list(senfo["name"].split(","))
-        SensorIPs : list = list(senfo["ip"].split(","))
-        SensorPorts : list = list(senfo["port"].split(","))
+        sensor_names : list = list(senfo["name"].split(","))
+        sensor_IPs : list = list(senfo["ip"].split(","))
+        sensor_ports : list = list(senfo["port"].split(","))
 
-        for count, name in enumerate(SensorNames):
-            Sensors.append(Sensor(name, SensorIPs[count], int(SensorPorts[count])))
+        for count, name in enumerate(sensor_names):
+            sensors.append(Sensor(name, sensor_IPs[count], int(sensor_ports[count])))
 
     except Exception:
         print("no configuration file found, enter senfo here manually:")
@@ -101,7 +101,7 @@ def read_config():
         with open("config.conf", 'w') as conf:
             config_object.write(conf)
         print("config has been stored in file for future use.")
-        Sensors.append(Sensor(senfo[0], senfo[1], int(senfo[2])))
+        sensors.append(Sensor(senfo[0], senfo[1], int(senfo[2])))
     
     return "Schad"
 
@@ -118,12 +118,12 @@ if __name__ == "__main__":
         
     
     try:
-        for sensor in Sensors:
+        for sensor in sensors:
             sensor.activate_sensor("1")
         while 1:
             clear_screen()
             try:
-                for Sensor in Sensors:
+                for Sensor in sensors:
                     print(Sensor)
                     print("\n")
                 t.sleep(1)
@@ -133,6 +133,6 @@ if __name__ == "__main__":
                 pass
 
     finally:
-        for sensor in Sensors:
+        for sensor in sensors:
             sensor.send_msg(DISCONNECT_MESSAGE)
-        statusRunning = False
+        status_running = False
