@@ -18,5 +18,5 @@ def sense():
     
 
 def get_data():
-
+    sense()
     return [senfo["name"], senfo["value"], senfo["unit"]]

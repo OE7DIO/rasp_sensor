@@ -48,7 +48,7 @@ def handle_client(conn, addr):
                 "ID" : 1,
                 "time" : t.time(),
                 "type" : ["Temperatur", "Wasserstand", "Taster"],
-                "value" : [random.randint(0, 100), random.randint(5, 20), random.randint(0, 1)], #random testing values
+                "value" : [random.randint(0, 100), random.randint(5, 20), random.choice([True, False])], #random testing values
                 "unit" : ["°C", "m", ""],
             }
 
